@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: "Criado por brunolobo2110@gmail.com",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = cookies();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar-state")?.value === "true";
 
   return (

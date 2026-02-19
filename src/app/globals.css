@@ -163,7 +163,7 @@
   background: hsl(var(--sidebar-foreground)/0.5);
 }
 .bg-telas{
-  background-color: #8d8d8d;
+  background: linear-gradient(to left, rgb(117, 125, 136), rgb(56, 66, 65));
 }
 .bg-content{
   background-color: rgb(94, 92, 92);
