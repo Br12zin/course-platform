@@ -1,5 +1,7 @@
 "use client";
 import * as React from "react";
+import Link from "next/link";
+
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -14,38 +16,51 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-import { HomeIcon, Menu as MenuIcon, Settings } from "lucide-react";
+
+import { Home, Settings, BookOpen, Menu as MenuIcon } from "lucide-react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 export default function Menu1() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  // --- Simulação de usuário logado ---
   const user = {
     name: "Bruno Lobo",
     email: "bruno@email.com",
-    avatarUrl: "", // se vazio, vai mostrar a inicial do email
+    avatarUrl: "",
   };
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  // --- Controle do menu do perfil ---
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  // --- Inicial do usuário (quando não tiver foto) ---
   const userInitial = user.email ? user.email[0].toUpperCase() : "?";
 
+  // ✅ MENU DINÂMICO ESCALÁVEL
+  const menuItems = [
+    { text: "Início", icon: Home, href: "/" },
+    { text: "Configurações", icon: Settings, href: "/configuracoes" },
+    { text: "Cursos", icon: BookOpen, href: "/cursos" },
+  ];
+
   const DrawerList = (
-    <Box sx={{ width: 250, height: "100%", bgcolor: "#7c7c7e", color: "#fff"  }}>
-      {/* --- Cabeçalho com seta --- */}
+    <Box
+      sx={{
+        width: 260,
+        height: "100%",
+        bgcolor: "#7c7c7e",
+        color: "#fff",
+      }}
+    >
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -55,11 +70,11 @@ export default function Menu1() {
         }}
       >
         <IconButton onClick={toggleDrawer(false)}>
-          <ChevronLeftIcon className="text-white"/>
+          <ChevronLeftIcon className="text-white" />
         </IconButton>
       </Box>
 
-      {/* --- Perfil --- */}
+      {/* Perfil */}
       <Box
         sx={{
           display: "flex",
@@ -74,33 +89,43 @@ export default function Menu1() {
         <Avatar src={user.avatarUrl || undefined}>
           {!user.avatarUrl && userInitial}
         </Avatar>
+
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
             {user.name}
           </Typography>
-          <Typography variant="body2" color="text-white">
+          <Typography variant="body2" sx={{ color: "#fff" }}>
             {user.email}
           </Typography>
         </Box>
       </Box>
 
-      <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ mb: 2, bgcolor: "rgba(255,255,255,0.2)" }} />
 
-      {/* --- Lista --- */}
+      {/* Lista dinâmica */}
       <List>
-        {["Início", "Configurações"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon >
-                {index % 2 === 0 ? <HomeIcon /> : <Settings />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <ListItem key={item.text} disablePadding>
+              <Link
+                href={item.href}
+                style={{ width: "100%", textDecoration: "none", color: "inherit" }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <Icon className="text-white" />
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          );
+        })}
       </List>
 
-      {/* --- Menu do perfil --- */}
+      {/* Menu do perfil */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -110,7 +135,7 @@ export default function Menu1() {
         <MenuItem
           onClick={() => {
             handleMenuClose();
-            alert("Sair da conta..."); // aqui você coloca o logout real
+            alert("Sair da conta...");
           }}
         >
           Sair
@@ -122,12 +147,10 @@ export default function Menu1() {
   return (
     <div className="flex-1 px-10 py-10">
       <Button onClick={toggleDrawer(true)} color="inherit">
-        <MenuIcon suppressHydrationWarning />
+        <MenuIcon />
       </Button>
-      <Drawer
-        open={open}
-        onClose={() => {}} // Desabilita fechar clicando fora
-      >
+
+      <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
     </div>

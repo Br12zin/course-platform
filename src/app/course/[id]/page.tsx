@@ -29,7 +29,7 @@ export default function CoursePage() {
       <p className="ml-6">{course.description}</p>
 
       {course.videos.length > 0 ? (
-        <video controls className="w-full rounded-lg">
+        <video controls className="w-full max-w-3xl rounded-lg">
           <source src={course.videos[0]} type="video/mp4" />
         </video>
       ) : (

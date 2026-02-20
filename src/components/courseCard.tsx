@@ -62,7 +62,7 @@ export function CourseCard({
           </div>
         )}
 
-        <p className="text-muted-foreground mb-4">{description}</p>
+        <p className="text-md mb-4">{description}</p>
 
         <Link
           href={`/course/${id}`}
