@@ -19,7 +19,7 @@ export default function CoursePage() {
   return (
     <div className="p-6 space-y-6">
         <Button variant="personalizado" asChild className="text-black ">
-        <Link href="/">
+        <Link href="/tela-inicial">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar para Cursos
         </Link>

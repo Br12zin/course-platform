@@ -1,21 +1,9 @@
-import CoursesPage from "@/components/courses";
-import React from "react";
-import Menu1 from "@/components/drawer";
+import Hero from "@/components/Hero";
 
-export default function Home() {
+export default function Capa() {
   return (
-    <div className="bg-telas">
-    <Menu1 />
-      <div className="flex flex-row items-center ml-50 mr-50">
-      <CoursesPage />
-      </div>
-    </div>
+    <main>
+      <Hero />
+    </main>
   );
 }
-
-
-
-
-
-
-
