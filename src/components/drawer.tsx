@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -24,6 +24,9 @@ export default function Menu1() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   const user = {
     name: "Bruno Lobo",
     email: "bruno@email.com",
@@ -44,11 +47,10 @@ export default function Menu1() {
 
   const userInitial = user.email ? user.email[0].toUpperCase() : "?";
 
-  // ✅ MENU DINÂMICO ESCALÁVEL
   const menuItems = [
     { text: "Início", icon: Home, href: "/" },
+    { text: "Cursos", icon: BookOpen, href: "/tela-inicial" },
     { text: "Configurações", icon: Settings, href: "/configuracoes" },
-    { text: "Cursos", icon: BookOpen, href: "/cursos" },
   ];
 
   const DrawerList = (
@@ -106,20 +108,47 @@ export default function Menu1() {
       <List>
         {menuItems.map((item) => {
           const Icon = item.icon;
+          const isActive = pathname === item.href;
 
           return (
             <ListItem key={item.text} disablePadding>
-              <Link
-                href={item.href}
-                style={{ width: "100%", textDecoration: "none", color: "inherit" }}
+              <ListItemButton
+                onClick={() => {
+                  if (pathname === item.href) {
+                    router.refresh();
+                  } else {
+                    router.push(item.href);
+                  }
+                  setOpen(false);
+                }}
+                sx={{
+                  mx: 1,
+                  borderRadius: 2,
+                  mb: 0.5,
+                  backgroundColor: isActive
+                    ? "rgba(255,255,255,0.15)"
+                    : "transparent",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                }}
               >
-                <ListItemButton>
-                  <ListItemIcon>
-                    <Icon className="text-white" />
-                  </ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </Link>
+                <ListItemIcon>
+                  <Icon
+                    className={
+                      isActive ? "text-blue-900" : "text-white"
+                    }
+                  />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    fontWeight: isActive ? "bold" : "normal",
+                  }}
+                />
+              </ListItemButton>
             </ListItem>
           );
         })}
