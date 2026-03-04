@@ -19,7 +19,7 @@ export default function LoginButtons() {
       <div className="absolute top-4 right-4 flex gap-2 z-50">
         <Link
           href="/login"
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-green-700/70 hover:bg-green-800/70 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
         >
           <LogIn size={18} />
           Entrar
