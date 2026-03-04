@@ -19,19 +19,21 @@ import IconButton from "@mui/material/IconButton";
 
 import { Home, Settings, BookOpen, Menu as MenuIcon } from "lucide-react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { getUserFromStorage, logout } from "@/lib/auth";
+import { User } from "@/types";
 
 export default function Menu1() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [user, setUser] = React.useState<User | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const user = {
-    name: "Bruno Lobo",
-    email: "bruno@email.com",
-    avatarUrl: "",
-  };
+  // Carregar usuário do localStorage
+  React.useEffect(() => {
+    setUser(getUserFromStorage());
+  }, []);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -45,7 +47,13 @@ export default function Menu1() {
     setAnchorEl(null);
   };
 
-  const userInitial = user.email ? user.email[0].toUpperCase() : "?";
+  const handleLogout = () => {
+    handleMenuClose();
+    logout();
+  };
+
+  // Inicial do usuário
+  const userInitial = user?.name ? user.name[0].toUpperCase() : "?";
 
   const menuItems = [
     { text: "Início", icon: Home, href: "/" },
@@ -76,7 +84,7 @@ export default function Menu1() {
         </IconButton>
       </Box>
 
-      {/* Perfil */}
+      {/* Perfil com dados REAIS */}
       <Box
         sx={{
           display: "flex",
@@ -88,23 +96,23 @@ export default function Menu1() {
         }}
         onClick={handleAvatarClick}
       >
-        <Avatar src={user.avatarUrl || undefined}>
-          {!user.avatarUrl && userInitial}
+        <Avatar>
+          {userInitial}
         </Avatar>
 
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-            {user.name}
+            {user?.name || "Visitante"}
           </Typography>
           <Typography variant="body2" sx={{ color: "#fff" }}>
-            {user.email}
+            {user?.email || "Não logado"}
           </Typography>
         </Box>
       </Box>
 
       <Divider sx={{ mb: 2, bgcolor: "rgba(255,255,255,0.2)" }} />
 
-      {/* Lista dinâmica */}
+      {/* Lista de menu */}
       <List>
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -114,11 +122,7 @@ export default function Menu1() {
             <ListItem key={item.text} disablePadding>
               <ListItemButton
                 onClick={() => {
-                  if (pathname === item.href) {
-                    router.refresh();
-                  } else {
-                    router.push(item.href);
-                  }
+                  router.push(item.href);
                   setOpen(false);
                 }}
                 sx={{
@@ -128,7 +132,6 @@ export default function Menu1() {
                   backgroundColor: isActive
                     ? "rgba(255,255,255,0.15)"
                     : "transparent",
-                  transition: "all 0.3s ease",
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.1)",
                   },
@@ -161,12 +164,7 @@ export default function Menu1() {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleMenuClose}>Meu Perfil</MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            alert("Sair da conta...");
-          }}
-        >
+        <MenuItem onClick={handleLogout}>
           Sair
         </MenuItem>
       </Menu>

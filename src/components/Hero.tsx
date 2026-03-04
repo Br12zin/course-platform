@@ -3,16 +3,17 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import AnimatedBackground from "./AnimatedBackground";
+import LoginButtons from "./LoginButtons"; // <-- IMPORTANTE
 
 export default function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center text-center text-white px-6">
       
-
       <AnimatedBackground />
+      <LoginButtons /> {/* BOTÕES NO CANTO SUPERIOR */}
 
       <div className="max-w-3xl">
-      <motion.header
+        <motion.header
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -48,13 +49,12 @@ export default function Hero() {
           transition={{ duration: 1.6 }}
           className="mt-10"
         >
-            <Link href="/tela-inicial">
-                <button className="px-8 py-4 bg-yellow-500 text-black font-semibold rounded-xl shadow-lg hover:scale-105 hover:shadow-yellow-500/40 transition duration-300">
-                    Ir para Aulas -&gt;
-                </button>
-            </Link>
+          <Link href="/tela-inicial">
+            <button className="px-8 py-4 bg-yellow-500 text-black font-semibold rounded-xl shadow-lg hover:scale-105 hover:shadow-yellow-500/40 transition duration-300">
+              Ir para Aulas -&gt;
+            </button>
+          </Link>
         </motion.div>
-
       </div>
     </section>
   );

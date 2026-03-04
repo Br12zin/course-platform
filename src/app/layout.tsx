@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import Menu1 from "@/components/drawer";
+// import Menu1 from "@/components/drawer"; // <-- Comentado porque você já tem o AppSidebar
 // import { AppSidebar } from "../components/app-sidebar";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen w-full overflow-x-hidden bg-telas">
         <SidebarProvider defaultOpen={defaultOpen}>
           <div className="flex min-h-screen w-full">
-            {/* <AppSidebar /> */}
+            {/* <AppSidebar /> - Descomente quando quiser usar */}
             <main className="flex-1 w-full">{children}</main>
           </div>
         </SidebarProvider>
