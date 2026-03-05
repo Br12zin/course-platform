@@ -196,8 +196,7 @@ export default function ConfiguracoesPage() {
   const tabs = [
     { id: 'perfil', name: 'Perfil', icon: UserIcon },
     { id: 'seguranca', name: 'Segurança', icon: Lock },
-    { id: 'preferencias', name: 'Preferências', icon: Sun },
-    { id: 'notificacoes', name: 'Notificações', icon: Bell },
+    { id: 'preferencias', name: 'Preferências', icon: Sun }
   ];
 
   return (
@@ -479,76 +478,6 @@ export default function ConfiguracoesPage() {
                       <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
                           preferences.darkMode ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleSavePreferences}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    <Save size={18} />
-                    Salvar preferências
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* =========================================== */}
-            {/* ABA NOTIFICAÇÕES */}
-            {/* =========================================== */}
-            {activeTab === 'notificacoes' && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Configurar Notificações</h2>
-                
-                <div className="space-y-4 max-w-md">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Bell size={20} className="text-gray-600 dark:text-gray-300" />
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Notificações do sistema</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Receber alertas do sistema</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setPreferences({...preferences, notifications: !preferences.notifications})}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        preferences.notifications ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          preferences.notifications ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Mail size={20} className="text-gray-600 dark:text-gray-300" />
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Atualizações por email</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Receber novidades no email</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setPreferences({...preferences, emailUpdates: !preferences.emailUpdates})}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        preferences.emailUpdates ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          preferences.emailUpdates ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
                     </button>
