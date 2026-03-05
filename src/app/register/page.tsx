@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { registerUser } from '@/lib/auth';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react'; // <-- IMPORTAR ÍCONE
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false); // <-- NOVO estado para sucesso
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +26,8 @@ export default function RegisterPage() {
 
     try {
       await registerUser(formData);
-      setSuccess(true); // Mostra mensagem de sucesso
+      setSuccess(true);
       
-      // Redireciona para o login após 2 segundos
       setTimeout(() => {
         router.push('/login');
       }, 2000);
@@ -40,7 +40,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 relative">
+      
+      {/* 🔥 BOTÃO VOLTAR */}
+      <button
+        onClick={() => router.back()}
+        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
+      >
+        <ArrowLeft size={18} />
+        Voltar
+      </button>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,7 +82,8 @@ export default function RegisterPage() {
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading || success} // Desabilita durante loading/sucesso
+              placeholder="Digite seu Nome"
+              disabled={loading || success}
             />
           </div>
 
@@ -86,6 +97,7 @@ export default function RegisterPage() {
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Digite seu Email"
               disabled={loading || success}
             />
           </div>
@@ -100,6 +112,7 @@ export default function RegisterPage() {
               value={formData.password}
               onChange={(e) => setFormData({...formData, password: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Digite sua Senha"
               disabled={loading || success}
             />
           </div>

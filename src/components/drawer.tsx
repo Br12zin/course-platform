@@ -17,7 +17,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 
-import { Home, Settings, BookOpen, Menu as MenuIcon } from "lucide-react";
+import { Home, Settings, BookOpen, Menu as MenuIcon, Shield } from "lucide-react"; // <-- ADICIONADO Shield
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { getUserFromStorage, logout } from "@/lib/auth";
 import { User } from "@/types";
@@ -26,13 +26,16 @@ export default function Menu1() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = React.useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = React.useState(false); // <-- ESTADO PARA ADMIN
 
   const router = useRouter();
   const pathname = usePathname();
 
-  // Carregar usuário do localStorage
+  // Carregar usuário do localStorage e verificar se é admin
   React.useEffect(() => {
-    setUser(getUserFromStorage());
+    const userData = getUserFromStorage();
+    setUser(userData);
+    setIsAdmin(userData?.is_admin === true); // <-- VERIFICA SE É ADMIN
   }, []);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -55,11 +58,20 @@ export default function Menu1() {
   // Inicial do usuário
   const userInitial = user?.name ? user.name[0].toUpperCase() : "?";
 
-  const menuItems = [
+  // Menu items base (sempre aparecem)
+  const baseMenuItems = [
     { text: "Início", icon: Home, href: "/" },
     { text: "Cursos", icon: BookOpen, href: "/tela-inicial" },
     { text: "Configurações", icon: Settings, href: "/configuracoes" },
   ];
+
+  // Menu item admin (só aparece se for admin)
+  const adminMenuItem = { text: "Painel Admin", icon: Shield, href: "/admin" };
+
+  // Monta o menu completo: base + admin (se for admin)
+  const menuItems = isAdmin 
+    ? [...baseMenuItems, adminMenuItem] 
+    : baseMenuItems;
 
   const DrawerList = (
     <Box
@@ -107,6 +119,12 @@ export default function Menu1() {
           <Typography variant="body2" sx={{ color: "#fff" }}>
             {user?.email || "Não logado"}
           </Typography>
+          {/* Badge de admin (opcional) */}
+          {isAdmin && (
+            <Typography variant="caption" sx={{ color: "#ffd700", display: "block" }}>
+              👑 Administrador
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -164,6 +182,11 @@ export default function Menu1() {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleMenuClose}>Meu Perfil</MenuItem>
+        {isAdmin && (
+          <MenuItem onClick={() => { handleMenuClose(); router.push('/admin'); }}>
+            Painel Admin
+          </MenuItem>
+        )}
         <MenuItem onClick={handleLogout}>
           Sair
         </MenuItem>
