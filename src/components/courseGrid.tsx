@@ -1,14 +1,56 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CourseCard } from "./courseCard";
-import { courses } from "@/lib/courses";
+import { getCourses } from "@/lib/courses";
+
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl?: string;
+  thumbnail?: string;
+  duration?: string;
+}
 
 export function CoursesGrid() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCourses() {
+      try {
+        const data = await getCourses();
+        setCourses(data);
+      } catch (error) {
+        console.error('Erro ao carregar cursos:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCourses();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-8 auto-rows-fr">
       {courses.map((course) => (
-        <CourseCard key={course.id} {...course} />
+        <CourseCard 
+          key={course.id} 
+          id={course.id}
+          title={course.title}
+          description={course.description}
+          videoUrl={course.videoUrl}
+          thumbnail={course.thumbnail}
+          duration={course.duration}
+        />
       ))}
     </div>
   );

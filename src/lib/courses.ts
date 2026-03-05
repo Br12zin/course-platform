@@ -1,21 +1,16 @@
-export const courses = [
-  {
-    id: "1",
-    title: "Curso de Bíblia",
-    videos: ["/videos/Aula01.mp4"],
-    thumbnail: "/images/biblia.png",
-    description: "Aprenda sobre a Bíblia e sua importância na fé cristã.",
-  },
-  {
-    id: "2",
-    title: "Next.js App Router",
-    videos: [],
-    description: "Domine o App Router e SSR",
-  },
-  {
-    id: "3",
-    title: "Node.js Backend",
-    videos: [],
-    description: "Backend moderno com Node.js e Express",
-  },
-];
+import { getVideos } from './videos';
+
+// Esta função substitui o array estático courses
+export async function getCourses() {
+  const videos = await getVideos();
+  
+  // Mapeia os vídeos do banco para o formato esperado pelo CourseCard
+  return videos.map((video: any) => ({
+    id: video.id.toString(),
+    title: video.title,
+    description: video.description,
+    videoUrl: video.url,  // ← PASSA A URL DO VÍDEO
+    thumbnail: video.thumbnail || '/thumb-default.png',
+    duration: video.duration
+  }));
+}
