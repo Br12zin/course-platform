@@ -9,7 +9,6 @@ interface Course {
   title: string;
   description: string;
   videoUrl?: string;
-  thumbnail?: string;
   duration?: string;
 }
 
@@ -48,7 +47,6 @@ export function CoursesGrid() {
           title={course.title}
           description={course.description}
           videoUrl={course.videoUrl}
-          thumbnail={course.thumbnail}
           duration={course.duration}
         />
       ))}

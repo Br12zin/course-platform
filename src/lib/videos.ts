@@ -9,7 +9,7 @@ export async function getVideos(): Promise<Video[]> {
   try {
     const res = await fetch(`${API_URL}/videos`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,  // ← CORRIGIDO!
         'Content-Type': 'application/json'
       }
     });
@@ -25,8 +25,7 @@ export async function getVideos(): Promise<Video[]> {
       id: video.id.toString(),
       title: video.title,
       description: video.description,
-      videoUrl: video.url,  // ← Isso vai para o src do vídeo
-      thumbnail: video.thumbnail || '/thumb-default.png',
+      videoUrl: video.url,
       duration: video.duration
     }));
     

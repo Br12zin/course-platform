@@ -10,7 +10,6 @@ export async function getCourses() {
     title: video.title,
     description: video.description,
     videoUrl: video.url,  // ← PASSA A URL DO VÍDEO
-    thumbnail: video.thumbnail || '/thumb-default.png',
     duration: video.duration
   }));
 }

@@ -10,8 +10,7 @@ interface CourseCardProps {
   id: string;
   title: string;
   description: string;
-  videoUrl?: string; // URL do vídeo
-  thumbnail?: string;
+  videoUrl?: string;
   duration?: string;
 }
 
@@ -20,7 +19,6 @@ export function CourseCard({
   title,
   description,
   videoUrl,
-  thumbnail,
   duration,
 }: CourseCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -100,23 +98,19 @@ export function CourseCard({
 
         <CardContent className="flex flex-col flex-1">
 
-          {/* Área do vídeo/thumbnail */}
+          {/* Área do vídeo - SEM THUMBNAIL */}
           <div className="mb-4 h-48 relative overflow-hidden rounded-xl bg-black/40">
             {videoUrl ? (
               <div className="relative w-full h-full group">
                 {!isPlaying ? (
-                  // Thumbnail com botão play
+                  // ✅ SEM THUMBNAIL - Apenas botão de play em fundo escuro
                   <div 
-                    className="relative w-full h-full cursor-pointer"
+                    className="relative w-full h-full cursor-pointer bg-gray-800 flex items-center justify-center"
                     onClick={() => setIsPlaying(true)}
                   >
-                    <img
-                      src={thumbnail || "/thumb-default.png"}
-                      alt={title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/50 transition">
-                      <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center group-hover:scale-110 transition">
+                    <div className="text-white text-center">
+                      <p className="text-sm mb-2">Clique para assistir</p>
+                      <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition">
                         <Play className="text-black ml-1" size={24} />
                       </div>
                     </div>
@@ -135,11 +129,12 @@ export function CourseCard({
                   >
                     <video
                       ref={videoRef}
-                      src={videoUrl}
+                      src={videoUrl?.startsWith('http') ? videoUrl : `http://127.0.0.1:8000${videoUrl || ''}`}
                       className="w-full h-full object-cover"
                       autoPlay
                       onClick={togglePlay}
                       onEnded={() => setIsPlaying(false)}
+                      crossOrigin="anonymous"
                     />
                     
                     {/* Controles do vídeo */}

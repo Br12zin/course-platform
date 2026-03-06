@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, Film, Trash2, Play, X } from 'lucide-react';
 
@@ -25,14 +25,39 @@ export default function AdminVideos() {
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // Carregar vídeos (simulado - depois vem do banco)
-  useState(() => {
-    // Aqui você buscaria do banco
-    const savedVideos = localStorage.getItem('videos');
-    if (savedVideos) {
-      setVideos(JSON.parse(savedVideos));
+  // 🔥 FUNÇÃO PARA CARREGAR VÍDEOS DO BANCO
+  const loadVideos = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://127.0.0.1:8000/api/videos', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Converter para o formato esperado
+        const formattedVideos = data.map((video: any) => ({
+          id: video.id.toString(),
+          title: video.title,
+          description: video.description,
+          url: video.url,
+          fileName: video.url.split('/').pop() || '',
+          uploadedAt: new Date(video.created_at || Date.now())
+        }));
+        setVideos(formattedVideos);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar vídeos:', error);
     }
-  });
+  };
+
+  // Carregar vídeos ao iniciar
+  useEffect(() => {
+    loadVideos();
+  }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,83 +83,89 @@ export default function AdminVideos() {
   };
 
   const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedFile || !formData.title) {
-      alert('Preencha todos os campos obrigatórios');
-      return;
-    }
+  e.preventDefault();
+  
+  if (!selectedFile || !formData.title) {
+    alert('Preencha todos os campos obrigatórios');
+    return;
+  }
 
-    setUploading(true);
-    setUploadProgress(0);
+  setUploading(true);
+  setUploadProgress(0);
 
-    // Simular progresso
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(interval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 500);
-
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('video', selectedFile);
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('description', formData.description);
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataToSend
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro no upload');
+  const interval = setInterval(() => {
+    setUploadProgress(prev => {
+      if (prev >= 90) {
+        clearInterval(interval);
+        return 90;
       }
+      return prev + 10;
+    });
+  }, 500);
 
-      // Adicionar vídeo à lista
-      const newVideo = {
-        id: Date.now().toString(),
-        title: formData.title,
-        description: formData.description,
-        url: data.video.url,
-        fileName: data.video.fileName,
-        uploadedAt: new Date()
-      };
+  try {
+    const token = localStorage.getItem('token');
+    const formDataToSend = new FormData();
+    formDataToSend.append('video', selectedFile);
+    formDataToSend.append('title', formData.title);
+    formDataToSend.append('description', formData.description);
 
-      const updatedVideos = [...videos, newVideo];
-      setVideos(updatedVideos);
-      
-      // Salvar no localStorage (temporário - depois vai pro banco)
-      localStorage.setItem('videos', JSON.stringify(updatedVideos));
+    // Upload direto para o Laravel
+    const res = await fetch('http://127.0.0.1:8000/api/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formDataToSend
+    });
 
-      // Limpar formulário
-      setFormData({ title: '', description: '' });
-      setSelectedFile(null);
-      setPreview(null);
-      setUploadProgress(100);
-      
-      alert('Vídeo enviado com sucesso!');
+    const data = await res.json();
 
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      clearInterval(interval);
-      setUploading(false);
-      setUploadProgress(0);
+    if (!res.ok) {
+      throw new Error(data.message || 'Erro no upload');
     }
-  };
 
-  const handleDeleteVideo = (id: string) => {
+    setUploadProgress(100);
+    alert('✅ Vídeo enviado e cadastrado com sucesso!');
+    
+    setFormData({ title: '', description: '' });
+    setSelectedFile(null);
+    setPreview(null);
+    
+    await loadVideos();
+    
+  } catch (error: any) {
+    alert(error.message);
+  } finally {
+    clearInterval(interval);
+    setUploading(false);
+    setUploadProgress(0);
+  }
+};
+
+  const handleDeleteVideo = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este vídeo?')) return;
 
-    const updatedVideos = videos.filter(v => v.id !== id);
-    setVideos(updatedVideos);
-    localStorage.setItem('videos', JSON.stringify(updatedVideos));
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://127.0.0.1:8000/api/admin/videos/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        alert('Vídeo excluído com sucesso!');
+        await loadVideos(); // Recarregar lista
+      } else {
+        alert('Erro ao excluir vídeo');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir:', error);
+      alert('Erro ao excluir vídeo');
+    }
   };
 
   return (
@@ -267,12 +298,12 @@ export default function AdminVideos() {
               <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition">
                 <div className="relative group">
                   <video 
-                    src={video.url} 
+                    src={`http://127.0.0.1:8000${video.url}`}
                     className="w-full h-48 object-cover bg-black"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                     <button
-                      onClick={() => window.open(video.url, '_blank')}
+                      onClick={() => window.open(`http://127.0.0.1:8000${video.url}`, '_blank')}
                       className="p-2 bg-white rounded-full hover:bg-gray-100"
                       title="Assistir"
                     >
