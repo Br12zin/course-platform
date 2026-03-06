@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Calendar28 } from "./date_picker";
-import { CoursesGrid } from "./courseGrid";
+import CoursesGrid  from "./courseGrid";
 
 export default function CoursesPage() {
   return (

@@ -1,36 +1,35 @@
-import { Video } from '@/types';
-
-const API_URL = 'http://127.0.0.1:8000/api';
-
-// Buscar todos os vídeos
-export async function getVideos(): Promise<Video[]> {
-  const token = localStorage.getItem('token');
-  
+export async function getVideos() {
   try {
-    const res = await fetch(`${API_URL}/videos`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,  // ← CORRIGIDO!
-        'Content-Type': 'application/json'
-      }
+    const res = await fetch("http://localhost:8000/api/videos", {
+      cache: "no-store"
     });
 
     if (!res.ok) {
-      throw new Error('Erro ao buscar vídeos');
+      throw new Error("Erro ao buscar vídeos");
     }
 
     const data = await res.json();
-    
-    // Mapear para o formato esperado pelo seu CourseCard
-    return data.map((video: any) => ({
-      id: video.id.toString(),
-      title: video.title,
-      description: video.description,
-      videoUrl: video.url,
-      duration: video.duration
-    }));
-    
+    return data;
   } catch (error) {
-    console.error('Erro ao buscar vídeos:', error);
+    console.error("Erro:", error);
     return [];
+  }
+}
+
+export async function getVideo(id: string) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/videos/${id}`, {
+      cache: "no-store"
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao buscar vídeo");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Erro:", error);
+    return null;
   }
 }

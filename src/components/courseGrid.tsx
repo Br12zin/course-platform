@@ -12,7 +12,7 @@ interface Course {
   duration?: string;
 }
 
-export function CoursesGrid() {
+export default function CoursesGrid() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,11 +22,12 @@ export function CoursesGrid() {
         const data = await getCourses();
         setCourses(data);
       } catch (error) {
-        console.error('Erro ao carregar cursos:', error);
+        console.error("Erro ao carregar cursos:", error);
       } finally {
         setLoading(false);
       }
     }
+
     loadCourses();
   }, []);
 
@@ -38,11 +39,19 @@ export function CoursesGrid() {
     );
   }
 
+  if (courses.length === 0) {
+    return (
+      <div className="text-center py-20 text-gray-400">
+        Nenhum curso disponível ainda.
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-8 auto-rows-fr">
       {courses.map((course) => (
-        <CourseCard 
-          key={course.id} 
+        <CourseCard
+          key={course.id}
           id={course.id}
           title={course.title}
           description={course.description}

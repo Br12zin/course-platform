@@ -1,7 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, SkipForward, SkipBack } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  Minimize,
+  SkipForward,
+  SkipBack,
+} from "lucide-react";
 
 interface VideoPlayerProps {
   src: string;
@@ -10,10 +19,15 @@ interface VideoPlayerProps {
   onEnded?: () => void;
 }
 
-export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: VideoPlayerProps) {
+export default function VideoPlayer({
+  src,
+  title,
+  autoPlay = false,
+  onEnded,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const [playing, setPlaying] = useState(autoPlay);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -21,23 +35,25 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
   const [muted, setMuted] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  const [controlsTimeout, setControlsTimeout] = useState<NodeJS.Timeout | null>(null);
+  const controlsTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
-      }
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (playing) {
+      video.play();
+    } else {
+      video.pause();
     }
   }, [playing]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = volume;
-      videoRef.current.muted = muted;
-    }
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.volume = volume;
+    video.muted = muted;
   }, [volume, muted]);
 
   const handleTimeUpdate = () => {
@@ -55,6 +71,7 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
     setCurrentTime(time);
+
     if (videoRef.current) {
       videoRef.current.currentTime = time;
     }
@@ -62,39 +79,35 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
-    
+
     if (!fullscreen) {
-      if (containerRef.current.requestFullscreen) {
-        containerRef.current.requestFullscreen();
-      }
+      containerRef.current.requestFullscreen?.();
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
+      document.exitFullscreen?.();
     }
+
     setFullscreen(!fullscreen);
   };
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handleMouseMove = () => {
     setShowControls(true);
-    
-    if (controlsTimeout) {
-      clearTimeout(controlsTimeout);
+
+    if (controlsTimeout.current) {
+      clearTimeout(controlsTimeout.current);
     }
-    
-    const timeout = setTimeout(() => {
+
+    controlsTimeout.current = setTimeout(() => {
       if (playing) {
         setShowControls(false);
       }
     }, 3000);
-    
-    setControlsTimeout(timeout);
   };
 
   const skipForward = () => {
@@ -110,34 +123,38 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative bg-black rounded-lg overflow-hidden group"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setShowControls(true)}
     >
-      {/* Video Element */}
+      {/* VIDEO */}
       <video
         ref={videoRef}
         src={src}
         className="w-full h-full"
+        autoPlay={autoPlay}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={onEnded}
         onClick={() => setPlaying(!playing)}
       />
 
-      {/* Título do vídeo */}
+      {/* Título */}
       {title && showControls && (
         <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/70 to-transparent text-white">
           <h3 className="font-medium">{title}</h3>
         </div>
       )}
 
-      {/* Controles */}
-      <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-        
-        {/* Barra de progresso */}
+      {/* CONTROLES */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 transition-opacity duration-300 ${
+          showControls ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {/* PROGRESS BAR */}
         <div className="mb-2">
           <input
             type="range"
@@ -147,16 +164,17 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
             onChange={handleSeek}
             className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-red-600"
           />
+
           <div className="flex justify-between text-xs text-white mt-1">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Botões de controle */}
+        {/* BOTÕES */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Play/Pause */}
+            {/* Play */}
             <button
               onClick={() => setPlaying(!playing)}
               className="text-white hover:text-red-500 transition p-1"
@@ -164,7 +182,7 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
               {playing ? <Pause size={20} /> : <Play size={20} />}
             </button>
 
-            {/* Skip Backward */}
+            {/* Voltar */}
             <button
               onClick={skipBackward}
               className="text-white hover:text-red-500 transition p-1"
@@ -172,7 +190,7 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
               <SkipBack size={18} />
             </button>
 
-            {/* Skip Forward */}
+            {/* Avançar */}
             <button
               onClick={skipForward}
               className="text-white hover:text-red-500 transition p-1"
@@ -186,8 +204,13 @@ export default function VideoPlayer({ src, title, autoPlay = false, onEnded }: V
                 onClick={() => setMuted(!muted)}
                 className="text-white hover:text-red-500 transition p-1"
               >
-                {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                {muted || volume === 0 ? (
+                  <VolumeX size={18} />
+                ) : (
+                  <Volume2 size={18} />
+                )}
               </button>
+
               <input
                 type="range"
                 min={0}
