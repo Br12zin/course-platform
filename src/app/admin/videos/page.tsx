@@ -83,65 +83,69 @@ export default function AdminVideos() {
   };
 
   const handleUpload = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (!selectedFile || !formData.title) {
-    alert('Preencha todos os campos obrigatórios');
-    return;
-  }
-
-  setUploading(true);
-  setUploadProgress(0);
-
-  const interval = setInterval(() => {
-    setUploadProgress(prev => {
-      if (prev >= 90) {
-        clearInterval(interval);
-        return 90;
-      }
-      return prev + 10;
-    });
-  }, 500);
-
-  try {
-    const token = localStorage.getItem('token');
-    const formDataToSend = new FormData();
-    formDataToSend.append('video', selectedFile);
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('description', formData.description);
-
-    // Upload direto para o Laravel
-    const res = await fetch('http://127.0.0.1:8000/api/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formDataToSend
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || 'Erro no upload');
+    e.preventDefault();
+    
+    if (!selectedFile || !formData.title) {
+      alert('Preencha todos os campos obrigatórios');
+      return;
     }
 
-    setUploadProgress(100);
-    alert('✅ Vídeo enviado e cadastrado com sucesso!');
-    
-    setFormData({ title: '', description: '' });
-    setSelectedFile(null);
-    setPreview(null);
-    
-    await loadVideos();
-    
-  } catch (error: any) {
-    alert(error.message);
-  } finally {
-    clearInterval(interval);
-    setUploading(false);
+    setUploading(true);
     setUploadProgress(0);
-  }
-};
+
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(interval);
+          return 90;
+        }
+        return prev + 10;
+      });
+    }, 500);
+
+    try {
+      const token = localStorage.getItem('token');
+      const formDataToSend = new FormData();
+      formDataToSend.append('video', selectedFile);
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+
+      // ✅ Upload direto para o Laravel (URL CORRETA)
+      const res = await fetch('http://127.0.0.1:8000/api/admin/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+          // ❌ NÃO colocar Content-Type aqui! O navegador define automaticamente com boundary
+        },
+        body: formDataToSend
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erro no upload');
+      }
+
+      setUploadProgress(100);
+      alert('✅ Vídeo enviado e cadastrado com sucesso!');
+      
+      // Limpar formulário
+      setFormData({ title: '', description: '' });
+      setSelectedFile(null);
+      setPreview(null);
+      
+      // Recarregar lista
+      await loadVideos();
+      
+    } catch (error: any) {
+      alert('Erro: ' + error.message);
+      console.error('Detalhes:', error);
+    } finally {
+      clearInterval(interval);
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
 
   const handleDeleteVideo = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este vídeo?')) return;
@@ -158,9 +162,10 @@ export default function AdminVideos() {
 
       if (res.ok) {
         alert('Vídeo excluído com sucesso!');
-        await loadVideos(); // Recarregar lista
+        await loadVideos();
       } else {
-        alert('Erro ao excluir vídeo');
+        const data = await res.json();
+        alert(data.message || 'Erro ao excluir vídeo');
       }
     } catch (error) {
       console.error('Erro ao excluir:', error);
@@ -300,6 +305,7 @@ export default function AdminVideos() {
                   <video 
                     src={`http://127.0.0.1:8000${video.url}`}
                     className="w-full h-48 object-cover bg-black"
+                    controls
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                     <button
