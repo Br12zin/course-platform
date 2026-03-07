@@ -30,8 +30,10 @@ export function CourseCard({
 
   // 🔗 monta URL completa do Laravel
   const videoSrc = videoUrl
-      ? `http://127.0.0.1:8000${videoUrl}`
-    : null;
+  ? videoUrl.startsWith("http")
+    ? videoUrl
+    : `http://127.0.0.1:8000${videoUrl}`
+  : null;
 
   const togglePlay = () => {
     if (!videoRef.current) return;

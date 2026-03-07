@@ -50,7 +50,7 @@ export default function VideoPlayer({
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !src) return;
 
     video.volume = volume;
     video.muted = muted;

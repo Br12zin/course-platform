@@ -20,7 +20,16 @@ export default function CoursesGrid() {
     async function loadCourses() {
       try {
         const data = await getCourses();
-        setCourses(data);
+
+        const formattedCourses = data.map((course: any) => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          videoUrl: course.url,
+          duration: course.duration,
+        }));
+
+        setCourses(formattedCourses);
       } catch (error) {
         console.error("Erro ao carregar cursos:", error);
       } finally {
