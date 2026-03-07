@@ -29,7 +29,6 @@ export interface Video {
   title: string;
   description: string;
   videoUrl: string;
-  thumbnail?: string;
   duration?: string;
   created_at?: string;
 }

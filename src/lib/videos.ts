@@ -1,6 +1,6 @@
 export async function getVideos() {
   try {
-    const res = await fetch("http://localhost:8000/api/videos", {
+    const res = await fetch("http://127.0.0.1:8000/api/videos", {
       cache: "no-store"
     });
 
@@ -18,7 +18,7 @@ export async function getVideos() {
 
 export async function getVideo(id: string) {
   try {
-    const res = await fetch(`http://localhost:8000/api/videos/${id}`, {
+    const res = await fetch(`http://127.0.0.1:8000/api/videos/${id}`, {
       cache: "no-store"
     });
 

@@ -25,15 +25,15 @@ export function CourseCard({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(1);
 
-  // 🔗 monta URL completa do Laravel
+  // monta URL completa do backend
   const videoSrc = videoUrl
-  ? videoUrl.startsWith("http")
-    ? videoUrl
-    : `http://127.0.0.1:8000${videoUrl}`
-  : null;
+    ? videoUrl.startsWith("http")
+      ? videoUrl
+      : `http://127.0.0.1:8000/${videoUrl}`
+    : null;
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -95,7 +95,6 @@ export function CourseCard({
 
         <CardContent className="flex flex-col flex-1">
 
-          {/* VIDEO AREA */}
           <div className="mb-4 h-48 relative overflow-hidden rounded-xl bg-black">
 
             {videoSrc ? (
@@ -128,16 +127,15 @@ export function CourseCard({
 
                   <video
                     ref={videoRef}
-                    src={videoSrc ?? ""}
+                    src={videoSrc}
                     className="w-full h-full object-cover"
-                    autoPlay
-                    controls={false}
+                    preload="metadata"
                     playsInline
+                    muted
                     onClick={togglePlay}
                     onEnded={() => setIsPlaying(false)}
                   />
 
-                  {/* CONTROLES */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
 
                     <div className="flex items-center justify-between text-white text-sm">
@@ -186,12 +184,10 @@ export function CourseCard({
 
           </div>
 
-          {/* DESCRIÇÃO */}
           <p className="text-gray-200 mb-4 text-sm line-clamp-3">
             {description}
           </p>
 
-          {/* BOTÃO */}
           <Link
             href={`/course/${id}`}
             className="mt-auto w-full inline-block px-5 py-2 rounded-lg bg-yellow-500 text-black font-semibold hover:scale-105 transition duration-300 shadow-md hover:shadow-yellow-500/40 text-center"
