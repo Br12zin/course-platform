@@ -28,12 +28,10 @@ export function CourseCard({
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(1);
 
-  // monta URL completa do backend
+  // montar url do video
   const videoSrc = videoUrl
-    ? videoUrl.startsWith("http")
-      ? videoUrl
-      : `http://127.0.0.1:8000/${videoUrl}`
-    : null;
+  ? `http://127.0.0.1:8000/${videoUrl.replace(/^\/+/, "")}`
+  : null;
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -41,7 +39,7 @@ export function CourseCard({
     if (isPlaying) {
       videoRef.current.pause();
     } else {
-      videoRef.current.play();
+      videoRef.current.play().catch(() => {});
     }
 
     setIsPlaying(!isPlaying);
@@ -50,8 +48,9 @@ export function CourseCard({
   const toggleMute = () => {
     if (!videoRef.current) return;
 
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    videoRef.current.muted = newMuted;
+    setIsMuted(newMuted);
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +62,11 @@ export function CourseCard({
     setVolume(newVolume);
 
     if (newVolume === 0) {
-      setIsMuted(true);
       videoRef.current.muted = true;
+      setIsMuted(true);
     } else {
-      setIsMuted(false);
       videoRef.current.muted = false;
+      setIsMuted(false);
     }
   };
 
@@ -109,7 +108,7 @@ export function CourseCard({
                     <p className="text-sm mb-2">Clique para assistir</p>
 
                     <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mx-auto hover:scale-110 transition">
-                      <Play className="text-black ml-1" size={24} />
+                      <Play className="text-black ml-1" size={24}/>
                     </div>
                   </div>
 
@@ -131,7 +130,7 @@ export function CourseCard({
                     className="w-full h-full object-cover"
                     preload="metadata"
                     playsInline
-                    muted
+                    muted={isMuted}
                     onClick={togglePlay}
                     onEnded={() => setIsPlaying(false)}
                   />
