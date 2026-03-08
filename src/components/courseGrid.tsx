@@ -21,11 +21,13 @@ export default function CoursesGrid() {
       try {
         const data = await getCourses();
 
+        console.log("Cursos carregados:", data);
+        
         const formattedCourses = data.map((course: any) => ({
           id: course.id,
           title: course.title,
           description: course.description,
-          videoUrl: course.url,
+          videoUrl: course.url ?? course.videoUrl ?? null,
           duration: course.duration,
         }));
 
