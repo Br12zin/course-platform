@@ -5,7 +5,7 @@ import { getVideo } from "@/lib/videos";
 export default async function CoursePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: number }>;
 }) {
 
   const { id } = await params;

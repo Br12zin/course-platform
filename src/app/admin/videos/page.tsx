@@ -25,7 +25,6 @@ export default function AdminVideos() {
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // 🔥 FUNÇÃO PARA CARREGAR VÍDEOS DO BANCO
   const loadVideos = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -38,7 +37,6 @@ export default function AdminVideos() {
       
       if (res.ok) {
         const data = await res.json();
-        // Converter para o formato esperado
         const formattedVideos = data.map((video: any) => ({
           id: video.id.toString(),
           title: video.title,
@@ -54,7 +52,6 @@ export default function AdminVideos() {
     }
   };
 
-  // Carregar vídeos ao iniciar
   useEffect(() => {
     loadVideos();
   }, []);
@@ -63,13 +60,11 @@ export default function AdminVideos() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Verificar se é MP4
     if (!file.type.includes('mp4')) {
       alert('Por favor, selecione um arquivo MP4');
       return;
     }
 
-    // Verificar tamanho (máx 100MB)
     if (file.size > 100 * 1024 * 1024) {
       alert('Arquivo muito grande. Máximo 100MB');
       return;
@@ -77,7 +72,6 @@ export default function AdminVideos() {
 
     setSelectedFile(file);
     
-    // Criar preview do vídeo
     const url = URL.createObjectURL(file);
     setPreview(url);
   };
@@ -110,31 +104,30 @@ export default function AdminVideos() {
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
 
-      // ✅ Upload direto para o Laravel (URL CORRETA)
       const res = await fetch('http://127.0.0.1:8000/api/admin/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // ❌ NÃO colocar Content-Type aqui! O navegador define automaticamente com boundary
-        },
-        body: formDataToSend
-      });
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`
+  },
+  body: formDataToSend
+});
 
-      const data = await res.json();
+// se o status não for ok, mostra o body
+if(!res.ok){
+  console.error(`Erro no upload: ${res.status} ${res.statusText}`);
+  throw new Error('Erro no upload');
+}
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Erro no upload');
-      }
+const data = await res.json();
+console.log('Upload OK:', data);
 
       setUploadProgress(100);
       alert('✅ Vídeo enviado e cadastrado com sucesso!');
       
-      // Limpar formulário
       setFormData({ title: '', description: '' });
       setSelectedFile(null);
       setPreview(null);
       
-      // Recarregar lista
       await loadVideos();
       
     } catch (error: any) {
@@ -177,7 +170,6 @@ export default function AdminVideos() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-8">Gerenciar Vídeos</h1>
 
-      {/* Formulário de Upload */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Upload size={20} />
@@ -185,7 +177,7 @@ export default function AdminVideos() {
         </h2>
 
         <form onSubmit={handleUpload} className="space-y-4">
-          {/* Área de upload do arquivo */}
+
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition">
             {preview ? (
               <div className="relative">
@@ -233,7 +225,6 @@ export default function AdminVideos() {
             )}
           </div>
 
-          {/* Campos do formulário */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Título do vídeo *
@@ -261,7 +252,6 @@ export default function AdminVideos() {
             />
           </div>
 
-          {/* Barra de progresso */}
           {uploading && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
@@ -288,7 +278,6 @@ export default function AdminVideos() {
         </form>
       </div>
 
-      {/* Lista de Vídeos */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-xl font-semibold mb-4">Vídeos Enviados</h2>
 
@@ -303,22 +292,20 @@ export default function AdminVideos() {
               <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition">
                 <div className="relative group">
                   <video 
-                    src={`http://127.0.0.1:8000${video.url}`}
+                    src={`http://127.0.0.1:8000/${video.url}`}
                     className="w-full h-48 object-cover bg-black"
                     controls
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                     <button
-                      onClick={() => window.open(`http://127.0.0.1:8000${video.url}`, '_blank')}
+                      onClick={() => window.open(`http://127.0.0.1:8000/${video.url}`)}
                       className="p-2 bg-white rounded-full hover:bg-gray-100"
-                      title="Assistir"
                     >
                       <Play size={20} className="text-blue-600" />
                     </button>
                     <button
                       onClick={() => handleDeleteVideo(video.id)}
                       className="p-2 bg-white rounded-full hover:bg-gray-100"
-                      title="Excluir"
                     >
                       <Trash2 size={20} className="text-red-600" />
                     </button>
