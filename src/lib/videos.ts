@@ -16,7 +16,7 @@ export async function getVideos() {
   }
 }
 
-export async function getVideo(id: string) {
+export async function getVideo(id: number) {
   try {
     const res = await fetch(`http://127.0.0.1:8000/api/videos/${id}`, {
       cache: "no-store"
