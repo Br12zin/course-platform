@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import AdminRoute from '@/components/AdminRoute';
-import { Users, Home, LogOut, Video } from 'lucide-react';
+import { Users, Home, LogOut, Video, ArrowLeft } from 'lucide-react'; // <-- Importar ArrowLeft
 import { logout, getUserFromStorage } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { User } from '@/types';
@@ -14,6 +14,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter(); // <-- pegar router para voltar
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -30,9 +31,18 @@ export default function AdminLayout({
     <AdminRoute>
       <div className="min-h-screen bg-gray-100 flex">
         {/* Sidebar Admin */}
-        <div className="w-64 bg-gray-900 text-white">
-          <div className="p-4">
-            <h2 className="text-xl font-bold mb-6">Painel Admin</h2>
+        <div className="w-64 bg-gray-900 text-white relative">
+          {/* BOTÃO VOLTAR */}
+          <button
+            onClick={() => router.push("/tela-inicial")} // <-- Voltar para a tela inicial
+            className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
+          >
+            <ArrowLeft size={18} />
+            Voltar
+          </button>
+
+          <div className="p-4 mt-12">
+            <h2 className="text-xl font-bold mb-6 mt-10">Painel Admin</h2>
             <p className="text-sm text-gray-400 mb-4">
               Admin: {user?.name}
             </p>

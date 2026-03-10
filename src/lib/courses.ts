@@ -5,7 +5,7 @@ export async function getCourses() {
 
   console.log(videos);
   return videos.map((video: any) => ({
-    id: video.id.toString(),
+    id: video.id,
     title: video.title,
     description: video.description,
     videoUrl: video.url,

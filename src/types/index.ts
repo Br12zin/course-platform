@@ -25,7 +25,7 @@ export interface RegisterCredentials {
 }
 
 export interface Video {
-  id: string;
+  id: number;
   title: string;
   description: string;
   videoUrl: string;

@@ -112,13 +112,16 @@ export default function AdminVideos() {
   body: formDataToSend
 });
 
-// se o status não for ok, mostra o body
-if(!res.ok){
-  console.error(`Erro no upload: ${res.status} ${res.statusText}`);
-  throw new Error('Erro no upload');
+let data;
+const contentType = res.headers.get('Content-Type') || '';
+if (contentType.includes('application/json')) {
+   data = await res.json();
+} else {
+    const text = await res.text();
+    console.error('Resposta não é JSON:', text);
+    throw new Error('Resposta inesperada do servidor');
 }
 
-const data = await res.json();
 console.log('Upload OK:', data);
 
       setUploadProgress(100);
@@ -292,13 +295,13 @@ console.log('Upload OK:', data);
               <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition">
                 <div className="relative group">
                   <video 
-                    src={`http://127.0.0.1:8000/${video.url}`}
+                    src={`http://127.0.0.1:8000${video.url}`}
                     className="w-full h-48 object-cover bg-black"
                     controls
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                     <button
-                      onClick={() => window.open(`http://127.0.0.1:8000/${video.url}`)}
+                      onClick={() => window.open(`http://127.0.0.1:8000${video.url}`)}
                       className="p-2 bg-white rounded-full hover:bg-gray-100"
                     >
                       <Play size={20} className="text-blue-600" />

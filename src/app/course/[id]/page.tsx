@@ -5,10 +5,9 @@ import { getVideo } from "@/lib/videos";
 export default async function CoursePage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: { id: number }; // aqui não precisa ser Promise
 }) {
-
-  const { id } = await params;
+  const { id } = params;
 
   const video = await getVideo(id);
 
@@ -23,9 +22,10 @@ export default async function CoursePage({
   return (
     <div className="max-w-5xl mx-auto p-10">
 
+      {/* Botão de voltar */}
       <Link
         href="/tela-inicial"
-        className="inline-block mb-6 text-yellow-500 hover:text-yellow-400"
+        className="mb-6 text-yellow-500 hover:text-yellow-400 inline-block"
       >
         ← Voltar aos cursos
       </Link>
@@ -34,15 +34,23 @@ export default async function CoursePage({
         {video.title}
       </h1>
 
+      {/* Passando src e duration para o VideoPlayer */}
       <VideoPlayer
-        src={`http://127.0.0.1:8000/${video.url}`}
-        title={video.videoUrl}
+        src={`http://127.0.0.1:8000${video.url}`}
+        title={video.title}
+        duration={video.duration ? parseDurationToSeconds(video.duration) : undefined}
       />
 
-      <p className="mt-6 text-gray-400">
+      <p className="mt-6 text-lg text-gray-400">
         {video.description}
       </p>
 
     </div>
   );
+}
+
+// Função utilitária para converter "mm:ss" em segundos
+function parseDurationToSeconds(duration: string) {
+  const [minutes, seconds] = duration.split(":").map(Number);
+  return minutes * 60 + seconds;
 }
