@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Upload, Film, Trash2, Play, X } from 'lucide-react';
 
 interface Video {
-  id: string;
+  id: number;
   title: string;
   description: string;
   url: string;
@@ -143,7 +143,7 @@ console.log('Upload OK:', data);
     }
   };
 
-  const handleDeleteVideo = async (id: string) => {
+  const handleDeleteVideo = async (id: number) => {
     if (!confirm('Tem certeza que deseja excluir este vídeo?')) return;
 
     try {
