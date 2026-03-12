@@ -1,7 +1,10 @@
+const API = process.env.NEXT_PUBLIC_API_URL;
+
 export async function getVideos() {
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/videos", {
-      cache: "no-store"
+    const res = await fetch(`${API}/api/videos`, {
+      cache: "no-store",
+      credentials: "include"
     });
 
     if (!res.ok) {
@@ -10,16 +13,18 @@ export async function getVideos() {
 
     const data = await res.json();
     return data;
+
   } catch (error) {
-    console.error("Erro:", error);
+    console.error("Erro ao buscar vídeos:", error);
     return [];
   }
 }
 
 export async function getVideo(id: number) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/videos/${id}`, {
-      cache: "no-store"
+    const res = await fetch(`${API}/api/videos/${id}`, {
+      cache: "no-store",
+      credentials: "include"
     });
 
     if (!res.ok) {
@@ -28,8 +33,9 @@ export async function getVideo(id: number) {
 
     const data = await res.json();
     return data;
+
   } catch (error) {
-    console.error("Erro:", error);
+    console.error("Erro ao buscar vídeo:", error);
     return null;
   }
 }

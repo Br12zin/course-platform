@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import AdminRoute from '@/components/AdminRoute';
+import AdminRoute from '@/AdminRoute';
 import { Users, Home, LogOut, Video, ArrowLeft } from 'lucide-react'; // <-- Importar ArrowLeft
 import { logout, getUserFromStorage } from '@/lib/auth';
 import { useEffect, useState } from 'react';

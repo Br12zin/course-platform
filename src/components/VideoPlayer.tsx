@@ -32,7 +32,7 @@ export default function VideoPlayer({ src, duration: backendDuration }: Props) {
     if (!video) return;
 
     if (video.paused) {
-      video.play();
+      video.play().catch(() =>{});
       setIsPlaying(true);
     } else {
       video.pause();
@@ -124,11 +124,17 @@ export default function VideoPlayer({ src, duration: backendDuration }: Props) {
 
       <video
         ref={videoRef}
-        src={src}
+        preload="metadata"
         className="w-full h-full object-cover"
         onTimeUpdate={handleTimeUpdate}
         onClick={togglePlay}
-      />
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+        >
+        <source src={src} type="video/mp4" />
+        </video>
+      
 
       {!isPlaying && (
         <button

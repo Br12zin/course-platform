@@ -12,6 +12,7 @@ interface Video {
   fileName: string;
   uploadedAt: Date;
 }
+  const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminVideos() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function AdminVideos() {
 
   const loadVideos = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/videos', {
+      const res = await fetch(`${API}/api/videos`, {
         headers: {
           credentials: 'include',
         }
@@ -36,7 +37,7 @@ export default function AdminVideos() {
       if (res.ok) {
         const data = await res.json();
         const formattedVideos = data.map((video: any) => ({
-          id: video.id.toString(),
+          id: video.id,
           title: video.title,
           description: video.description,
           url: video.url,
@@ -101,12 +102,10 @@ export default function AdminVideos() {
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
 
-      const res = await fetch('http://127.0.0.1:8000/api/admin/upload', {
+      const res = await fetch(`${API}/api/admin/upload`, {
   method: 'POST',
-  headers: {
-    credentials: 'include'
-  },
-  body: formDataToSend
+    credentials: 'include',
+    body: formDataToSend
 });
 
 let data;
@@ -141,28 +140,33 @@ console.log('Upload OK:', data);
   };
 
   const handleDeleteVideo = async (id: number) => {
-    if (!confirm('Tem certeza que deseja excluir este vídeo?')) return;
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API}/api/admin/videos/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!confirm("Deseja realmente deletar este vídeo?")) return;
+    const text = await res.text();
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/admin/videos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          credentials: 'include',
-        }
-      });
-
-      if (res.ok) {
-        alert('Vídeo excluído com sucesso!');
-        await loadVideos();
-      } else {
-        const data = await res.json();
-        alert(data.message || 'Erro ao excluir vídeo');
-      }
-    } catch (error) {
-      console.error('Erro ao excluir:', error);
-      alert('Erro ao excluir vídeo');
+      const data = JSON.parse(text);
+      console.log(data);
+    } catch {
+      console.error("Resposta não é JSON:", text);
     }
-  };
+
+    await loadVideos();
+
+  } catch (error) {
+    console.error("Erro ao excluir:", error);
+  }
+};
 
   return (
     <div className="p-6">
@@ -290,13 +294,13 @@ console.log('Upload OK:', data);
               <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition">
                 <div className="relative group">
                   <video 
-                    src={`http://127.0.0.1:8000${video.url}`}
+                    src={`${API}${video.url}`}
                     className="w-full h-48 object-cover bg-black"
                     controls
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                     <button
-                      onClick={() => window.open(`http://127.0.0.1:8000${video.url}`)}
+                      onClick={() => window.open(`${API}${video.url}`)}
                       className="p-2 bg-white rounded-full hover:bg-gray-100"
                     >
                       <Play size={20} className="text-blue-600" />

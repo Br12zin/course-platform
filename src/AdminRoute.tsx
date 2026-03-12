@@ -11,34 +11,27 @@ export default function AdminRoute({ children }: { children: React.ReactNode }) 
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    async function checkAdmin() {
-      // Verificar se está logado
-      if (!isAuthenticated()) {
-        router.push('/login');
-        return;
-      }
+ async function checkAdmin() {
 
-      // Buscar usuário atual (valida token e pega dados)
-      const user = await getCurrentUser();
-      
-      if (!user) {
-        router.push('/login');
-        return;
-      }
+   const user = await getCurrentUser();
 
-      // Verificar se é admin
-      if (user.is_admin) {
-        setIsAdmin(true);
-      } else {
-        // Não é admin, manda pra tela inicial
-        router.push('/tela-inicial');
-      }
+   if (!user) {
+     router.push('/login');
+     return;
+   }
 
-      setLoading(false);
-    }
+   if (!user.is_admin) {
+     router.push('/tela-inicial');
+     return;
+   }
 
-    checkAdmin();
-  }, [router]);
+   setIsAdmin(true);
+   setLoading(false);
+
+ }
+
+ checkAdmin();
+}, []);
 
   if (loading) {
     return (

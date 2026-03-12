@@ -20,10 +20,14 @@ export function CourseCard({
   videoUrl,
 }: CourseCardProps) {
 
-  const videoSrc = videoUrl
-    ? `http://127.0.0.1:8000/${videoUrl.replace(/^\/+/, "")}`
-    : null;
-console.log(videoUrl);
+  const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+const videoSrc = videoUrl
+  ? videoUrl.startsWith("http")
+    ? videoUrl
+    : `${API}${videoUrl.startsWith("/") ? videoUrl : `/${videoUrl}`}`
+  : null;
+    
   return (
     <motion.div
       className="h-full"

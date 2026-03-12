@@ -1,6 +1,6 @@
 import { AuthResponse, LoginCredentials, RegisterCredentials, User } from '@/types';
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 // ===========================================
 // FUNÇÕES DE AUTENTICAÇÃO
@@ -8,7 +8,7 @@ const API_URL = 'http://127.0.0.1:8000/api';
 
 // Registrar usuário
 export async function registerUser(userData: RegisterCredentials): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/register`, {
+  const res = await fetch(`${API}/api/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export async function registerUser(userData: RegisterCredentials): Promise<AuthR
 
 // Login
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/login`, {
+  const res = await fetch(`${API}/api/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export async function getCurrentUser(): Promise<User | null> {
   if (!token) return null;
 
   try {
-    const res = await fetch(`${API_URL}/user`, {
+    const res = await fetch(`${API}/api/user`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -81,10 +81,27 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 // Logout
-export function logout(): void {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/';
+export async function logout(): Promise<void> {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    try {
+      await fetch(`${API}/api/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  }
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  window.location.href = "/";
 }
 
 // Verificar se está logado
@@ -117,7 +134,7 @@ export function isAdmin(): boolean {
 export async function getUsers(): Promise<User[]> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/users`, {
+  const res = await fetch(`${API}/api/admin/users`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -136,7 +153,7 @@ export async function getUsers(): Promise<User[]> {
 export async function getUserById(id: number): Promise<User> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/users/${id}`, {
+  const res = await fetch(`${API}/api/admin/users/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -155,7 +172,7 @@ export async function getUserById(id: number): Promise<User> {
 export async function updateUser(id: number, userData: Partial<User>): Promise<User> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/users/${id}`, {
+  const res = await fetch(`${API}/api/admin/users/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -175,7 +192,7 @@ export async function updateUser(id: number, userData: Partial<User>): Promise<U
 export async function deleteUser(id: number): Promise<void> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/users/${id}`, {
+  const res = await fetch(`${API}/api/admin/users/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -186,6 +203,8 @@ export async function deleteUser(id: number): Promise<void> {
   if (!res.ok) {
     throw new Error('Erro ao deletar usuário');
   }
+  console.log("STATUS:", res.status);
+  const data = await res.json();
 }
 
 // Buscar estatísticas (admin apenas)
@@ -196,7 +215,7 @@ export async function getAdminStats(): Promise<{
 }> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/stats`, {
+  const res = await fetch(`${API}/api/admin/stats`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -217,7 +236,7 @@ export async function getAdminStats(): Promise<{
 
 // Solicitar reset de senha
 export async function forgotPassword(email: string): Promise<{ message: string, token?: string }> {
-  const res = await fetch(`${API_URL}/forgot-password`, {
+  const res = await fetch(`${API}/api/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -237,7 +256,7 @@ export async function forgotPassword(email: string): Promise<{ message: string, 
 
 // Validar token
 export async function validateToken(email: string, token: string): Promise<{ message: string, email: string }> {
-  const res = await fetch(`${API_URL}/validate-token`, {
+  const res = await fetch(`${API}/api/validate-token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -265,7 +284,7 @@ export async function resetPassword(email: string, token: string, password: stri
   }
 
   // Se for reset com token (esqueceu senha)
-  const res = await fetch(`${API_URL}/reset-password`, {
+  const res = await fetch(`${API}/api/reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -292,7 +311,7 @@ export async function resetPassword(email: string, token: string, password: stri
 export async function makeAdmin(id: number): Promise<User> {
   const token = localStorage.getItem('token');
   
-  const res = await fetch(`${API_URL}/admin/users/${id}/make-admin`, {
+  const res = await fetch(`${API}/api/admin/users/${id}/make-admin`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

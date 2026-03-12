@@ -2,14 +2,16 @@ import Link from "next/link";
 import VideoPlayer from "@/components/VideoPlayer";
 import { getVideo } from "@/lib/videos";
 
-export default async function CoursePage({
-  params,
-}: {
-  params: { id: number }; // aqui não precisa ser Promise
-}) {
-  const { id } = params;
+export default async function CoursePage(
+  
+  { params }: { params: Promise<{ id: string }> }
+) {
 
-  const video = await getVideo(id);
+  const API = process.env.NEXT_PUBLIC_API_URL;
+ 
+  const {id} = await params;
+  
+  const video = await getVideo(Number(id));
 
   if (!video) {
     return (
@@ -20,12 +22,14 @@ export default async function CoursePage({
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-10">
+    <div className="max-w-7xl mx-auto p-10">
 
       {/* Botão de voltar */}
       <Link
         href="/tela-inicial"
-        className="mb-6 text-yellow-500 hover:text-yellow-400 inline-block"
+        className="inline-flex items-center gap-2 mb-6 px-4 py-2 
+        bg-yellow-500 hover:bg-yellow-600 
+        text-black rounded-lg transition backdrop-blur-sm"
       >
         ← Voltar aos cursos
       </Link>
@@ -34,11 +38,14 @@ export default async function CoursePage({
         {video.title}
       </h1>
 
-      {/* Passando src e duration para o VideoPlayer */}
       <VideoPlayer
-        src={`http://127.0.0.1:8000${video.url}`}
+        src={`${API}${video.url}`}
         title={video.title}
-        duration={video.duration ? parseDurationToSeconds(video.duration) : undefined}
+        duration={
+          video.duration
+            ? parseDurationToSeconds(video.duration)
+            : undefined
+        }
       />
 
       <p className="mt-6 text-lg text-gray-400">
@@ -49,7 +56,7 @@ export default async function CoursePage({
   );
 }
 
-// Função utilitária para converter "mm:ss" em segundos
+// converter "mm:ss" → segundos
 function parseDurationToSeconds(duration: string) {
   const [minutes, seconds] = duration.split(":").map(Number);
   return minutes * 60 + seconds;

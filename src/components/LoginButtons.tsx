@@ -10,44 +10,58 @@ export default function LoginButtons() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    setUser(getUserFromStorage());
+    const loadUser = () => {
+      const storedUser = getUserFromStorage();
+      setUser(storedUser);
+    };
+
+    loadUser();
+
+    // Atualiza se o localStorage mudar
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
-  // Se NÃO estiver logado: mostra botões de entrar/cadastrar
-  if (!user) {
-    return (
-      <div className="absolute top-4 right-4 flex gap-2 z-50">
-        <Link
-          href="/login"
-          className="flex items-center gap-2 px-4 py-2 bg-green-700/70 hover:bg-green-800/70 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
-        >
-          <LogIn size={18} />
-          Entrar
-        </Link>
-        <Link
-          href="/register"
-          className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg transition backdrop-blur-sm"
-        >
-          <UserPlus size={18} />
-          Cadastrar
-        </Link>
-      </div>
-    );
-  }
-
-  // Se ESTIVER logado: mostra nome e botão sair
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-4 z-50">
-      <span className="text-white/90 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-        Olá, <span className="font-semibold text-white">{user.name}</span>
-      </span>
-      <button
-        onClick={logout}
-        className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg transition border border-red-500/30 backdrop-blur-sm"
-      >
-        <LogOut size={18} />
-        Sair
-      </button>
+    <div className="absolute top-4 right-4 flex items-center gap-3 z-50">
+      
+      {!user ? (
+        <>
+          <Link
+            href="/login"
+            className="flex items-center gap-2 px-4 py-2 bg-green-700/70 hover:bg-green-800/70 text-white rounded-lg transition border border-white/30 backdrop-blur-sm"
+          >
+            <LogIn size={18} />
+            Entrar
+          </Link>
+
+          <Link
+            href="/register"
+            className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg transition backdrop-blur-sm"
+          >
+            <UserPlus size={18} />
+            Cadastrar
+          </Link>
+        </>
+      ) : (
+        <>
+          <span className="text-white/90 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+            Olá, <span className="font-semibold text-white">{user.name}</span>
+          </span>
+
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg transition border border-red-500/30 backdrop-blur-sm"
+          >
+            <LogOut size={18} />
+            Sair
+          </button>
+        </>
+      )}
+
     </div>
   );
 }
