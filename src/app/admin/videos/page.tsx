@@ -13,6 +13,7 @@ interface Video {
   uploadedAt: Date;
 }
   const API = process.env.NEXT_PUBLIC_API_URL;
+  const token = localStorage.getItem("token");
 
 export default function AdminVideos() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function AdminVideos() {
     try {
       const res = await fetch(`${API}/api/videos`, {
         headers: {
-          credentials: 'include',
+          Authorization: `Bearer ${token}`
         }
       });
       
@@ -102,10 +103,12 @@ export default function AdminVideos() {
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
 
-      const res = await fetch(`${API}/api/admin/upload`, {
+      const res = await fetch(`${API}/api/admin/videos/upload`, {
   method: 'POST',
-    credentials: 'include',
-    body: formDataToSend
+  headers:{
+    Authorization: `Bearer ${token}`
+  },
+  body: formDataToSend
 });
 
 let data;
