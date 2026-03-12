@@ -27,11 +27,9 @@ export default function AdminVideos() {
 
   const loadVideos = async () => {
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch('http://127.0.0.1:8000/api/videos', {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          credentials: 'include',
         }
       });
       
@@ -98,7 +96,6 @@ export default function AdminVideos() {
     }, 500);
 
     try {
-      const token = localStorage.getItem('token');
       const formDataToSend = new FormData();
       formDataToSend.append('video', selectedFile);
       formDataToSend.append('title', formData.title);
@@ -107,7 +104,7 @@ export default function AdminVideos() {
       const res = await fetch('http://127.0.0.1:8000/api/admin/upload', {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${token}`
+    credentials: 'include'
   },
   body: formDataToSend
 });
@@ -147,12 +144,10 @@ console.log('Upload OK:', data);
     if (!confirm('Tem certeza que deseja excluir este vídeo?')) return;
 
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`http://127.0.0.1:8000/api/admin/videos/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          credentials: 'include',
         }
       });
 
