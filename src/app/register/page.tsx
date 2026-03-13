@@ -17,6 +17,19 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [message, setMessage] = useState<{type: String, text:string} | null>(null);
+
+  const checkPasswordStrength = (password: string) => {
+  let strength = 0;
+
+  if (password.length >= 8) strength++;
+  if (/[A-Z]/.test(password)) strength++; // letra maiúscula
+  if (/[0-9]/.test(password)) strength++; // número
+  if (/[^A-Za-z0-9]/.test(password)) strength++; // caractere especial
+
+  setPasswordStrength(strength);
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +37,12 @@ export default function RegisterPage() {
     setSuccess(false);
     setLoading(true);
 
+    // 🔥 Validar força mínima
+      if (passwordStrength < 2) {
+          setError('Use uma senha mais forte (mínimo 8 caracteres, letras e números)');
+          setLoading(false);
+        return;
+      }
     try {
       await registerUser(formData);
       setSuccess(true);
@@ -110,13 +129,38 @@ export default function RegisterPage() {
               type="password"
               required
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) => {
+              setFormData({...formData, password: e.target.value});
+              checkPasswordStrength(e.target.value);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Digite sua Senha"
               disabled={loading || success}
-            />
+              />
           </div>
+          <div className="mt-2">
+  <div className="h-2 w-full bg-gray-200 rounded">
+    <div
+      className={`h-2 rounded transition-all ${
+        passwordStrength === 1 ? 'bg-red-500 w-1/4' :
+        passwordStrength === 2 ? 'bg-yellow-500 w-2/4' :
+        passwordStrength === 3 ? 'bg-blue-500 w-3/4' :
+        passwordStrength >= 4 ? 'bg-green-500 w-full' :
+        'w-0'
+      }`}
+    />
+  </div>
 
+  <p className="text-xs mt-1 text-gray-500">
+    Força da senha:
+    {passwordStrength === 0 && " muito fraca"}
+    {passwordStrength === 1 && " fraca"}
+    {passwordStrength === 2 && " média"}
+    {passwordStrength === 3 && " forte"}
+    {passwordStrength >= 4 && " muito forte"}
+  </p>
+</div>
+ 
           <button
             type="submit"
             disabled={loading || success}

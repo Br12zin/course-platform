@@ -223,7 +223,7 @@ console.log('Upload OK:', data);
                     ou arraste e solte aqui
                   </span>
                   <span className="text-xs text-gray-400 mt-2">
-                    Máximo: 100MB
+                    Máximo: 2GB
                   </span>
                 </label>
               </div>

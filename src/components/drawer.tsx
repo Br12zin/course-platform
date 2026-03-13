@@ -181,7 +181,7 @@ export default function Menu1() {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>Meu Perfil</MenuItem>
+        <MenuItem onClick={() => {handleMenuClose(); router.push('/configuracoes')}}>Meu Perfil</MenuItem>
         {isAdmin && (
           <MenuItem onClick={() => { handleMenuClose(); router.push('/admin'); }}>
             Painel Admin

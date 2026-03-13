@@ -113,16 +113,16 @@ export default function ConfiguracoesPage() {
   };
 
   // 🔥 FUNÇÃO PARA SALVAR COM ANIMAÇÃO
-  const showSuccessMessage = (text: string) => {
-    setMessage({ type: 'success', text });
-    setShowSuccess(true);
-    
-    setTimeout(() => {
-      setShowSuccess(false);
-      setMessage({ type: '', text: '' });
-      router.push('/tela-inicial');
-    }, 1500);
-  };
+  const showSuccessMessage = (text: string, redirectTo: string = '/login') => {
+  setMessage({ type: 'success', text });
+  setShowSuccess(true);
+  
+  setTimeout(() => {
+    setShowSuccess(false);
+    setMessage({ type: '', text: '' });
+    router.push(redirectTo);
+  }, 1500);
+};
 
   // Atualizar perfil
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -184,7 +184,7 @@ export default function ConfiguracoesPage() {
   // Salvar preferências
   const handleSavePreferences = () => {
     localStorage.setItem('preferences', JSON.stringify(preferences));
-    showSuccessMessage('✅ Preferências salvas!');
+    showSuccessMessage('✅ Preferências salvas!', '/tela-inicial');
     
     if (preferences.darkMode) {
       document.documentElement.classList.add('dark');
