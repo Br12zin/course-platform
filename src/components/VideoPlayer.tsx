@@ -123,7 +123,9 @@ export default function VideoPlayer({ src, duration: backendDuration }: Props) {
     <div className="relative w-full h-full bg-black rounded-xl overflow-hidden">
 
       <video
+        key={src}
         ref={videoRef}
+        src={src}
         preload="metadata"
         className="w-full h-full object-cover"
         onTimeUpdate={handleTimeUpdate}
@@ -131,10 +133,8 @@ export default function VideoPlayer({ src, duration: backendDuration }: Props) {
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
-        >
-        <source src={src} type="video/mp4" />
-        </video>
-      
+      />
+    
 
       {!isPlaying && (
         <button
