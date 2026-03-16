@@ -58,18 +58,18 @@ export default function CoursesGrid() {
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-8 auto-rows-fr">
-      {courses.map((course) => (
-        <CourseCard
-          key={course.id}
-          id={course.id}
-          title={course.title}
-          description={course.description}
-          videoUrl={course.videoUrl}
-          duration={course.duration}
-        />
-      ))}
-    </div>
-  );
+ return (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 auto-rows-fr">
+    {courses.map((course) => (
+      <CourseCard
+        key={course.id}
+        id={course.id}
+        title={course.title}
+        description={course.description}
+        videoUrl={course.videoUrl}
+        duration={course.duration}
+      />
+    ))}
+  </div>
+);
 }

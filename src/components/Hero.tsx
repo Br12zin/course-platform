@@ -28,7 +28,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
           style={{ color: "#1b5e63" }}
-          className="text-5xl md:text-6xl font-serif font-bold leading-tight"
+          className="text-3xl sm:text-4xl font-serif font-bold leading-tight"
         >
           Aprofundando nas Escrituras.
         </motion.h1>

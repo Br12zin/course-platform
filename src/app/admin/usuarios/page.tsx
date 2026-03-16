@@ -81,48 +81,51 @@ export default function AdminUsuarios() {
     );
   }
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">Gerenciar Usuários</h1>
+ return (
+  <div className="w-full max-w-full px-4 sm:px-6 py-6">
+    <h1 className="text-2xl sm:text-3xl font-bold mb-8">Gerenciar Usuários</h1>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
-          {error}
-        </div>
-      )}
+    {error && (
+      <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
+        {error}
+      </div>
+    )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="w-full overflow-x-auto">
+        <table className="min-w-[700px] w-full divide-y divide-gray-200 text-sm sm:text-base">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 ID
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Nome
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Admin
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Criado em
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Ações
               </th>
             </tr>
           </thead>
+
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                   {user.id}
                 </td>
-                
-                <td className="px-6 py-4 whitespace-nowrap">
+
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                   {editingId === user.id ? (
                     <input
                       type="text"
@@ -131,11 +134,11 @@ export default function AdminUsuarios() {
                       className="border rounded px-2 py-1 w-full"
                     />
                   ) : (
-                    <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                    <span className="font-medium text-gray-900">{user.name}</span>
                   )}
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                   {editingId === user.id ? (
                     <input
                       type="email"
@@ -144,16 +147,16 @@ export default function AdminUsuarios() {
                       className="border rounded px-2 py-1 w-full"
                     />
                   ) : (
-                    <span className="text-sm text-gray-500">{user.email}</span>
+                    <span className="text-gray-500">{user.email}</span>
                   )}
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => toggleAdmin(user)}
                     className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
-                      user.is_admin 
-                        ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                      user.is_admin
+                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -162,62 +165,53 @@ export default function AdminUsuarios() {
                   </button>
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-500">
                   {new Date(user.created_at || '').toLocaleDateString('pt-BR')}
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <div className="flex gap-2 flex-wrap">
                     {editingId === user.id ? (
-                      // MODO EDIÇÃO
                       <>
                         <button
                           onClick={() => handleUpdate(user.id)}
                           className="text-green-600 hover:text-green-900"
-                          title="Salvar"
                         >
                           <Save size={18} />
                         </button>
+
                         <button
                           onClick={() => setEditingId(null)}
                           className="text-gray-600 hover:text-gray-900"
-                          title="Cancelar"
                         >
                           <X size={18} />
                         </button>
                       </>
                     ) : (
-                      // MODO NORMAL
                       <>
-                        {/* Botão Editar */}
                         <button
                           onClick={() => {
                             setEditingId(user.id);
                             setEditForm(user);
                           }}
                           className="text-blue-600 hover:text-blue-900"
-                          title="Editar"
                         >
                           <Edit size={18} />
                         </button>
 
-                        {/* 🔥 BOTÃO PROMOVER A ADMIN (só aparece para usuários comuns) */}
                         {!user.is_admin && (
                           <button
                             onClick={() => handleMakeAdmin(user.id, user.name)}
                             className="text-green-600 hover:text-green-900"
-                            title="Tornar Administrador"
                           >
                             <UserPlus size={18} />
                           </button>
                         )}
 
-                        {/* Botão Excluir */}
                         <button
                           onClick={() => handleDelete(user.id)}
                           className="text-red-600 hover:text-red-900"
-                          title="Excluir"
-                          disabled={user.id === 1} // Não deixar excluir admin principal
+                          disabled={user.id === 1}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -225,11 +219,13 @@ export default function AdminUsuarios() {
                     )}
                   </div>
                 </td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
-  );
+  </div>
+);
 }

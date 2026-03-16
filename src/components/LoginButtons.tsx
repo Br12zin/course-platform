@@ -26,7 +26,7 @@ export default function LoginButtons() {
   }, []);
 
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-3 z-50">
+    <div className="absolute top-4 right-4 flex flex-wrap items-center gap-3">
       
       {!user ? (
         <>

@@ -29,9 +29,9 @@ export default function AdminLayout({
 
   return (
     <AdminRoute>
-      <div className="min-h-screen bg-gray-100 flex">
+      <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row w-full">
         {/* Sidebar Admin */}
-        <div className="w-64 bg-gray-900 text-white relative">
+        <div className="w-full md:w-64 flex-shrink-0 bg-gray-900 text-white relative">
           {/* BOTÃO VOLTAR */}
           <button
             onClick={() => router.push("/tela-inicial")} // <-- Voltar para a tela inicial
@@ -79,7 +79,7 @@ export default function AdminLayout({
         </div>
 
         {/* Conteúdo principal */}
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-4 w-full sm:p-6 md:p-8 overflow-x-hidden">
           {children}
         </div>
       </div>

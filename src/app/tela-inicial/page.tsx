@@ -4,11 +4,13 @@ import Menu1 from "@/components/drawer";
 
 export default function Home() {
   return (
-    <div className="bg-telas">
+    <div className="bg-telas min-h-screen">
       <Menu1 />
-      <div className="flex flex-row items-center ml-50 mr-50">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <CoursesPage />
       </div>
+
     </div>
   );
 }

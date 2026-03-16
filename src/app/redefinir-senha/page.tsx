@@ -152,7 +152,7 @@ export default function RedefinirSenhaPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white p-8 rounded-lg shadow-xl w-96"
+        className="bg-white p-6 md:p-8 rounded-lg shadow-xl w-full max-w-md mx-4"
       >
         {success ? (
           // ✅ TELA DE SUCESSO (SEM BOTÃO DE VOLTAR, SÓ REDIRECIONA)

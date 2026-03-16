@@ -195,7 +195,7 @@ export default function Menu1() {
   );
 
   return (
-    <div className="flex-1 px-10 py-10">
+    <div className="px-4 py-4">
       <Button onClick={toggleDrawer(true)} color="inherit">
         <MenuIcon />
       </Button>

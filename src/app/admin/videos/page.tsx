@@ -292,13 +292,13 @@ console.log('Upload OK:', data);
             <p>Nenhum vídeo enviado ainda</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {videos.map((video) => (
-              <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition">
+              <div key={video.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white">
                 <div className="relative group">
                   <video 
                     src={`${API}${video.url}`}
-                    className="w-full h-48 object-cover bg-black"
+                    className="w-full h-40 sm:h-48 object-cover bg-black"
                     controls
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
@@ -317,8 +317,8 @@ console.log('Upload OK:', data);
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-1">{video.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{video.description}</p>
+                  <h3 className="font-semibold text-base sm:text-lg mb-1">{video.title}</h3>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{video.description}</p>
                   <p className="text-xs text-gray-400">
                     Enviado em {new Date(video.uploadedAt).toLocaleDateString('pt-BR')}
                   </p>

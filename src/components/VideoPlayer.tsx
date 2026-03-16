@@ -127,7 +127,7 @@ export default function VideoPlayer({ src, duration: backendDuration }: Props) {
         ref={videoRef}
         src={src}
         preload="metadata"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         onTimeUpdate={handleTimeUpdate}
         onClick={togglePlay}
         onPlay={() => setIsPlaying(true)}
